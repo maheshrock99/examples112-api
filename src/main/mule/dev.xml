@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:tls="http://www.mulesoft.org/schema/mule/tls" xmlns:secure-properties="http://www.mulesoft.org/schema/mule/secure-properties"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/secure-properties http://www.mulesoft.org/schema/mule/secure-properties/current/mule-secure-properties.xsd
+http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="0305f2b5-c1fd-438d-bf0a-beafbe370a04" >
+		<http:listener-connection host="${listner.host}" port="${listner.port}" />
+	</http:listener-config>
+	<configuration-properties doc:name="Configuration properties" doc:id="b93a39a7-f43d-48f9-a739-4573a8a0ce50" file="${env}.properties" />
+	<global-property doc:name="Global Property" doc:id="99760a00-eb84-4fca-8615-393be3d7010b" name="env" value="test" />
+	<flow name="devFlow" doc:id="318625aa-5a7b-487b-a203-7077bdc7f259" >
+		<http:listener doc:name="Listener" doc:id="b10aa232-eeaa-4170-a910-936128298c28" config-ref="HTTP_Listener_config" path="${listner.path}"/>
+		<logger level="INFO" doc:name="Logger" doc:id="4788110d-a706-4b96-a02c-7a19e1e2b24a" message="Data received #[payload]"/>
+		<ee:transform doc:name="Transform Message" doc:id="7ef9a802-6aff-4c1f-baa1-b361891d2e07" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/xml
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<http:request method="GET" doc:name="Request" doc:id="6d14637e-bfa3-4ca9-98ee-af6171e4ec7f" url="${Request.URL}"/>
+	</flow>
+</mule>
